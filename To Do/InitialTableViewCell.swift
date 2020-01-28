@@ -10,7 +10,7 @@ import UIKit
 import Foundation
 
 class InitialTableViewCell: UITableViewCell {
-
+    let defaults = UserDefaults.standard
     
     @IBOutlet weak var taskCellLabel: UILabel!
     @IBOutlet weak var completeTaskButton: UIButton!
@@ -38,6 +38,7 @@ class InitialTableViewCell: UITableViewCell {
         if isComplete! {
             isComplete = false
             //uncheck the thing
+            print("VIEW CELL")
             completeTaskButton.setImage(UIImage(systemName: "square"), for: .normal)
             //remove strike out NEED TO DO
             //change the image
@@ -46,6 +47,7 @@ class InitialTableViewCell: UITableViewCell {
             //Strikes out the text
             //taskCellLabel.attributedText = attributeString
             //change the image
+            print("VIEW CELL")
             completeTaskButton.setImage(UIImage(systemName: "checkmark.square.fill"), for: .normal)
         }
     }

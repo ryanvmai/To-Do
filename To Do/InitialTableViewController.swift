@@ -50,20 +50,17 @@ class InitialTableViewController: UITableViewController {
 //        } else {
 //            defaults.set(Int(), forKey: "points")
 //        }
-        
-        
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem
     }
 
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
+        // return the number of sections
         return 1
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
+        // return the number of rows
         return tasks.count
     }
 
@@ -76,9 +73,11 @@ class InitialTableViewController: UITableViewController {
         if let cellWithOtherName = cell as? InitialTableViewCell {
             cellWithOtherName.taskCellLabel.text = tasks[indexPath.row]
             cellWithOtherName.isComplete = completed[indexPath.row]
-            if completed[indexPath.row] {
+            if !cellWithOtherName.isComplete! {
                 cellWithOtherName.completeTaskButton.setImage(UIImage(systemName: "square"), for: .normal)
+                print("VIEW TABLE")
             } else {
+                print("View Table")
                 cellWithOtherName.completeTaskButton.setImage(UIImage(systemName: "checkmark.square.fill"), for: .normal)
             }
             return cellWithOtherName
@@ -87,15 +86,18 @@ class InitialTableViewController: UITableViewController {
         return cell
     }
     
-    // Override to support editing the table view.
+    // Adding in the swipe to delete feature
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
+            
             //delete item from tasks array
             tasks.remove(at: indexPath.row)
             completed.remove(at: indexPath.row)
+            
             //update user defaults here
             defaults.set(tasks, forKey: "tasks")
             defaults.set(completed, forKey: "completed")
+            
             // Delete the row from the data source
             tableView.deleteRows(at: [indexPath], with: .fade)
         } else if editingStyle == .insert {
@@ -103,33 +105,3 @@ class InitialTableViewController: UITableViewController {
         }    
     }
 }
-
-
-
-
-
-/*
-// Override to support rearranging the table view.
-override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-
-} */
-
-
-/*
-// Override to support conditional rearranging of the table view.
-override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-    // Return false if you do not want the item to be re-orderable.
-    return true
-}
-*/
-
-/*
-// MARK: - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-    // Get the new view controller using segue.destination.
-    // Pass the selected object to the new view controller.
-}
-*/
-
