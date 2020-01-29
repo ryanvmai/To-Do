@@ -48,7 +48,7 @@ class DeletedTasksTableViewController: UITableViewController {
 
     //Configure the cell here
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "myCellIdentifier", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "myIdentifier", for: indexPath)
 
         // Downcasting
         if let cellWithOtherName = cell as? DeletedTasksTableViewCell {
