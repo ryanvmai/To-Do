@@ -70,10 +70,8 @@
 				5618FD0D23CF7BBF008A626F /* AppDelegate.swift */,
 				5618FD0F23CF7BBF008A626F /* SceneDelegate.swift */,
 				5618FD1323CF7BBF008A626F /* Main.storyboard */,
-				56351E0323D8B9B900A4E77D /* InitialTableViewController.swift */,
+				56FE4CA123E147A100D8D26E /* Task Tables */,
 				56593FA823DB718700FEB68B /* InfoViewController.swift */,
-				56351E0523D8B9CA00A4E77D /* InitialTableViewCell.swift */,
-				56B81FB823D23B8F004B75AD /* EditTaskViewController.swift */,
 				5618FD1623CF7BC5008A626F /* Assets.xcassets */,
 				5618FD1823CF7BC5008A626F /* LaunchScreen.storyboard */,
 				5618FD1B23CF7BC5008A626F /* Info.plist */,
@@ -88,6 +86,16 @@
 				56FE4C9E23E0F4F800D8D26E /* DeletedTasksTableViewCell.swift */,
 			);
 			path = DeletedTasks;
+			sourceTree = "<group>";
+		};
+		56FE4CA123E147A100D8D26E /* Task Tables */ = {
+			isa = PBXGroup;
+			children = (
+				56B81FB823D23B8F004B75AD /* EditTaskViewController.swift */,
+				56351E0323D8B9B900A4E77D /* InitialTableViewController.swift */,
+				56351E0523D8B9CA00A4E77D /* InitialTableViewCell.swift */,
+			);
+			path = "Task Tables";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

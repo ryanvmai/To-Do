@@ -12,16 +12,21 @@ import Foundation
 class InitialTableViewController: UITableViewController {
     //UserDefaults Set up
     let defaults = UserDefaults.standard
+    
     //Variables that will be matched with UserDefaults
     var tasks: [String] = []
     var deletedTasks: [String] = []
+    var deletedTasksCompleted: [Bool] = []
     var completed: [Bool] = []
+    var priority: [Bool] = []
     var points: Int = 0
     var completedTasks: Int = 0
+    var notes: [String] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        //User dafults stuff
+        
+        //Setting up UserDefaults: checking for variables and populating them
         if let taskData = defaults.array(forKey: "tasks") as? [String] {
             // successfully found the saved data!
             tasks = taskData
@@ -29,24 +34,33 @@ class InitialTableViewController: UITableViewController {
             // No data saved (first time only, probably!
             defaults.set([String](), forKey: "tasks")
         }
+        if let notesData = defaults.array(forKey: "notes") as? [String] {
+            notes = notesData
+        } else {
+            defaults.set([String](), forKey: "notes")
+        }
+        if let priorityData = defaults.array(forKey: "priority") as? [Bool] {
+            priority = priorityData
+        } else {
+            defaults.set([Bool](), forKey: "priority")
+        }
+        if let deletedTaskCompletedData = defaults.array(forKey: "deletedCompleted") as? [Bool] {
+            deletedTasksCompleted = deletedTaskCompletedData
+        } else {
+            defaults.set([Bool](), forKey: "deletedCompleted")
+        }
         if let deletedTaskData = defaults.array(forKey: "deletedTasks") as? [String] {
-            // successfully found the saved data!
             deletedTasks = deletedTaskData
         } else {
-            // No data saved (first time only, probably!
             defaults.set([String](), forKey: "deletedTasks")
         }
         if let completedData = defaults.array(forKey: "completed") as? [Bool] {
-            // successfully found the saved data!
             completed = completedData
         } else {
-            // No data saved (first time only, probably!
             defaults.set([Bool](), forKey: "completed")
         }
-        //check this
         points = defaults.integer(forKey: "points")
         completedTasks = defaults.integer(forKey: "completedTasks")
-//        defaults.set(points, forKey: "points")
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -59,6 +73,9 @@ class InitialTableViewController: UITableViewController {
         if let completedData = defaults.array(forKey: "completed") as? [Bool] {
             // successfully found the saved data!
             completed = completedData
+        }
+        if let priorityData = defaults.array(forKey: "priority") as? [Bool] {
+            priority = priorityData
         }
     }
 
@@ -83,6 +100,12 @@ class InitialTableViewController: UITableViewController {
             cellWithOtherName.taskCellLabel.text = tasks[indexPath.row]
             cellWithOtherName.isComplete = completed[indexPath.row]
             cellWithOtherName.cellForRowAt = indexPath.row
+            cellWithOtherName.notesCellLabel.text = notes[indexPath.row]
+            if priority[indexPath.row] {
+                cellWithOtherName.priorityButton.setImage(UIImage(systemName: "flag.fill"), for: .normal)
+            } else {
+                //remove the image here (only need when you add in the editing feature)
+            }
             //For the checkmark
             if !cellWithOtherName.isComplete! {
                 cellWithOtherName.completeTaskButton.setImage(UIImage(systemName: "square"), for: .normal)
@@ -99,17 +122,31 @@ class InitialTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             
+            //Updated array from UserDefaults
+            if let deletedTasksData = defaults.array(forKey: "deletedTasks") as? [String] {
+                deletedTasks = deletedTasksData
+            }
+            if let deletedTasksCompletedData = defaults.array(forKey: "deletedCompleted") as? [Bool] {
+                deletedTasksCompleted = deletedTasksCompletedData
+            }
+            
             //add to deleted tasks array
             deletedTasks.append(tasks[indexPath.row])
+            deletedTasksCompleted.append(completed[indexPath.row])
             
             //delete item from tasks array
             tasks.remove(at: indexPath.row)
+            notes.remove(at: indexPath.row)
             completed.remove(at: indexPath.row)
+            priority.remove(at: indexPath.row)
             
             //update user defaults here
-            defaults.set(tasks, forKey: "tasks")
-            defaults.set(completed, forKey: "completed")
             defaults.set(deletedTasks, forKey: "deletedTasks")
+            defaults.set(deletedTasksCompleted, forKey: "deletedCompleted")
+            defaults.set(tasks, forKey: "tasks")
+            defaults.set(notes, forKey: "notes")
+            defaults.set(completed, forKey: "completed")
+            defaults.set(priority, forKey: "priority")
             
             // Delete the row from the data source
             tableView.deleteRows(at: [indexPath], with: .fade)

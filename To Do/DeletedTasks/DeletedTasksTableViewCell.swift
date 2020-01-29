@@ -11,6 +11,7 @@ import UIKit
 class DeletedTasksTableViewCell: UITableViewCell {
 
     @IBOutlet weak var deletedTasksLabel: UILabel!
+    @IBOutlet weak var completedLabel: UILabel!
     
     override func awakeFromNib() {
         super.awakeFromNib()

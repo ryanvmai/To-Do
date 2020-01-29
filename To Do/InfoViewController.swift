@@ -15,27 +15,33 @@ class InfoViewController: UIViewController {
     var deletedTasks: [String] = []
     
     @IBOutlet weak var pointsLabel: UILabel!
+    @IBOutlet weak var tasksCompletedLabel: UILabel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        points = defaults.integer(forKey: "points")
-        completedTasks = defaults.integer(forKey: "completedTasks")
+        viewDidAppear(true)
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(true)
         points = defaults.integer(forKey: "points")
-        completedTasks = defaults.integer(forKey: "completedTasks")
-        pointsLabel.text = String(points)
-        print(completedTasks)
+        completedTasks = defaults.integer(forKey: "tasksCompleted")
         
-        //testing purposes only
-        if let deletedTaskData = defaults.array(forKey: "deletedTasks") as? [String] {
-            deletedTasks = deletedTaskData
-        }
-        for tasks in deletedTasks {
-            print(tasks)
-        }
+        pointsLabel.text = String(points)
+        tasksCompletedLabel.text = String(completedTasks)
+        print("From UserDefaults: \(defaults.integer(forKey: "tasksCompleted"))")
+        print("completedTasks: \(completedTasks)")
+    }
+    
+    //Resets the points and tasks completed
+    @IBAction func resetStatsPressed(_ sender: Any) {
+        points = 0
+        completedTasks = 0
+        defaults.set(points, forKey: "points")
+        defaults.set(completedTasks, forKey: "tasksCompleted")
+        
+        pointsLabel.text = String(0)
+        tasksCompletedLabel.text = String(0)
     }
     
 }

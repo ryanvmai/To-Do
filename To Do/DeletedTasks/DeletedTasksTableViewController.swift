@@ -14,12 +14,16 @@ class DeletedTasksTableViewController: UITableViewController {
     let defaults = UserDefaults.standard
     //Variables that will be matched with UserDefaults
     var deletedTasks: [String] = []
+    var deletedTasksCompleted: [Bool] = []
 
     override func viewDidLoad() {
         super.viewDidLoad()
         //UserDefaults - populate data
         if let deletedTasksData = defaults.array(forKey: "deletedTasks") as? [String] {
             deletedTasks = deletedTasksData
+        }
+        if let deletedTasksCompletedData = defaults.array(forKey: "deletedCompleted") as? [Bool] {
+            deletedTasksCompleted = deletedTasksCompletedData
         }
     }
     
@@ -28,16 +32,17 @@ class DeletedTasksTableViewController: UITableViewController {
          if let deletedTasksData = defaults.array(forKey: "deletedTasks") as? [String] {
                    deletedTasks = deletedTasksData
         }
-        
-        // FOR TESTING ONLY - remember to delete
-        for tasks in deletedTasks {
-            print(tasks)
+        if let deletedTasksCompletedData = defaults.array(forKey: "deletedCompleted") as? [Bool] {
+            deletedTasksCompleted = deletedTasksCompletedData
         }
+        //Reload the data
+        tableView.reloadData()
     }
 
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
+        //set number of sections
         return 1
     }
 
@@ -54,6 +59,15 @@ class DeletedTasksTableViewController: UITableViewController {
         if let cellWithOtherName = cell as? DeletedTasksTableViewCell {
             //set up cell and pass information
             cellWithOtherName.deletedTasksLabel.text = deletedTasks[indexPath.row]
+            
+            if deletedTasksCompleted[indexPath.row] {
+                print("task completed")
+                cellWithOtherName.completedLabel.text = "Completed"
+            } else {
+                print("Task not completed")
+                cellWithOtherName.completedLabel.text = "Not Completed"
+            }
+            
             return cellWithOtherName
         }
 
@@ -61,12 +75,16 @@ class DeletedTasksTableViewController: UITableViewController {
     }
 
     
-    // Override to support editing the table view.
+    // Allowing swipe to delete
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             
+            //deleting from the arrau
             deletedTasks.remove(at: indexPath.row)
+            deletedTasksCompleted.remove(at: indexPath.row)
+            //setting UserDefaults
             defaults.set(deletedTasks, forKey: "deletedTasks")
+            defaults.set(deletedTasksCompleted, forKey: "deletedCompleted")
             
             // Delete the row from the data source
             tableView.deleteRows(at: [indexPath], with: .fade)
@@ -74,4 +92,16 @@ class DeletedTasksTableViewController: UITableViewController {
             
         }    
     }
+    
+    //Clearing the entire table
+    @IBAction func clearPressed(_ sender: Any) {
+        deletedTasks.removeAll()
+        deletedTasksCompleted.removeAll()
+        print(deletedTasks.count)
+        defaults.set(deletedTasks, forKey: "deletedTasks")
+        defaults.set(deletedTasksCompleted, forKey: "deletedCompleted")
+        print(defaults.array(forKey: "deletedTasks")!.count)
+        tableView.reloadData()
+    }
+    
 }
