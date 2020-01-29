@@ -10,21 +10,14 @@ import UIKit
 import Foundation
 
 class InitialTableViewController: UITableViewController {
+    //UserDefaults Set up
     let defaults = UserDefaults.standard
+    //Variables that will be matched with UserDefaults
     var tasks: [String] = []
+    var deletedTasks: [String] = []
     var completed: [Bool] = []
     var points: Int = 0
-    
-    override func viewDidAppear(_ animated: Bool) {
-        if let taskData = defaults.array(forKey: "tasks") as? [String] {
-            // successfully found the saved data!
-            tasks = taskData
-        }
-        if let completedData = defaults.array(forKey: "completed") as? [Bool] {
-            // successfully found the saved data!
-            completed = completedData
-        }
-    }
+    var completedTasks: Int = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -36,6 +29,13 @@ class InitialTableViewController: UITableViewController {
             // No data saved (first time only, probably!
             defaults.set([String](), forKey: "tasks")
         }
+        if let deletedTaskData = defaults.array(forKey: "deletedTasks") as? [String] {
+            // successfully found the saved data!
+            deletedTasks = deletedTaskData
+        } else {
+            // No data saved (first time only, probably!
+            defaults.set([String](), forKey: "deletedTasks")
+        }
         if let completedData = defaults.array(forKey: "completed") as? [Bool] {
             // successfully found the saved data!
             completed = completedData
@@ -43,13 +43,23 @@ class InitialTableViewController: UITableViewController {
             // No data saved (first time only, probably!
             defaults.set([Bool](), forKey: "completed")
         }
-        
-        //NEED TO FIX THIS
-//        if let pointsData = defaults.array(forKey: "points") as? Int {
-//            points = pointsData
-//        } else {
-//            defaults.set(Int(), forKey: "points")
-//        }
+        //check this
+        points = defaults.integer(forKey: "points")
+        completedTasks = defaults.integer(forKey: "completedTasks")
+//        defaults.set(points, forKey: "points")
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        //Populate tasks with data in UserDefaults
+        if let taskData = defaults.array(forKey: "tasks") as? [String] {
+            // successfully found the saved data!
+            tasks = taskData
+        }
+        //Populate tasks with data in UserDefaults
+        if let completedData = defaults.array(forKey: "completed") as? [Bool] {
+            // successfully found the saved data!
+            completed = completedData
+        }
     }
 
     // MARK: - Table view data source
@@ -64,20 +74,19 @@ class InitialTableViewController: UITableViewController {
         return tasks.count
     }
 
-    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-       
         let cell = tableView.dequeueReusableCell(withIdentifier: "myCellIdentifier", for: indexPath)
         
         //downcasting
         if let cellWithOtherName = cell as? InitialTableViewCell {
+            //setup cell and pass information
             cellWithOtherName.taskCellLabel.text = tasks[indexPath.row]
             cellWithOtherName.isComplete = completed[indexPath.row]
+            cellWithOtherName.cellForRowAt = indexPath.row
+            //For the checkmark
             if !cellWithOtherName.isComplete! {
                 cellWithOtherName.completeTaskButton.setImage(UIImage(systemName: "square"), for: .normal)
-                print("VIEW TABLE")
             } else {
-                print("View Table")
                 cellWithOtherName.completeTaskButton.setImage(UIImage(systemName: "checkmark.square.fill"), for: .normal)
             }
             return cellWithOtherName
@@ -90,6 +99,9 @@ class InitialTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             
+            //add to deleted tasks array
+            deletedTasks.append(tasks[indexPath.row])
+            
             //delete item from tasks array
             tasks.remove(at: indexPath.row)
             completed.remove(at: indexPath.row)
@@ -97,6 +109,7 @@ class InitialTableViewController: UITableViewController {
             //update user defaults here
             defaults.set(tasks, forKey: "tasks")
             defaults.set(completed, forKey: "completed")
+            defaults.set(deletedTasks, forKey: "deletedTasks")
             
             // Delete the row from the data source
             tableView.deleteRows(at: [indexPath], with: .fade)
